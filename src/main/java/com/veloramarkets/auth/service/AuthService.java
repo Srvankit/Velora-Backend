@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.veloramarkets.auth.dto.LoginRequest;
 import com.veloramarkets.security.JwtService;
+import com.veloramarkets.portfolio.entity.Portfolio;
+import com.veloramarkets.portfolio.repository.PortfolioRepository;
+
+import java.math.BigDecimal;
 
 @Service
 public class AuthService {
@@ -18,15 +22,18 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final PortfolioRepository portfolioRepository;
 
     public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            JwtService jwtService) {
+            JwtService jwtService,
+            PortfolioRepository portfolioRepository) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.portfolioRepository = portfolioRepository;
     }
 
     @Transactional
@@ -64,6 +71,13 @@ public class AuthService {
         user.setEmailVerified(false);
 
         User savedUser = userRepository.save(user);
+
+        Portfolio portfolio = new Portfolio();
+
+        portfolio.setUser(savedUser);
+        portfolio.setCashBalance(new BigDecimal("100000.00"));
+
+        portfolioRepository.save(portfolio);
 
         return new AuthResponse(
                 savedUser.getId(),
