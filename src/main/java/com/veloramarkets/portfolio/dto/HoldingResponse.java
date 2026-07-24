@@ -8,7 +8,12 @@ public record HoldingResponse(
         String symbol,
         String companyName,
         long quantity,
-        BigDecimal averageBuyPrice
+        BigDecimal averageBuyPrice,
+        BigDecimal currentPrice,
+        BigDecimal investedValue,
+        BigDecimal marketValue,
+        BigDecimal unrealizedPnL,
+        BigDecimal returnPercentage
 
 ) {
 }

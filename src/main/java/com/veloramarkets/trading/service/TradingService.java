@@ -21,6 +21,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
+import com.veloramarkets.trading.dto.OrderHistoryResponse;
+import com.veloramarkets.trading.dto.TransactionResponse;
+
+import java.util.List;
+
 @Service
 public class TradingService {
 
@@ -99,6 +104,79 @@ public class TradingService {
         throw new BadRequestException(
                 "Unsupported order side"
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderHistoryResponse> getOrderHistory(
+            Authentication authentication) {
+
+        User user = getAuthenticatedUser(authentication);
+
+        Portfolio portfolio = portfolioRepository
+                .findByUserId(user.getId())
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "Portfolio not found"
+                        )
+                );
+
+        return orderRepository
+                .findAllByPortfolioIdOrderByCreatedAtDesc(
+                        portfolio.getId()
+                )
+                .stream()
+                .map(order ->
+                        new OrderHistoryResponse(
+                                order.getId(),
+                                order.getSymbol(),
+                                order.getCompanyName(),
+                                order.getSide().name(),
+                                order.getOrderType().name(),
+                                order.getStatus().name(),
+                                order.getQuantity(),
+                                order.getLimitPrice(),
+                                order.getExecutionPrice(),
+                                order.getTotalAmount(),
+                                order.getCreatedAt(),
+                                order.getExecutedAt()
+                        )
+                )
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<TransactionResponse> getTransactionHistory(
+            Authentication authentication) {
+
+        User user = getAuthenticatedUser(authentication);
+
+        Portfolio portfolio = portfolioRepository
+                .findByUserId(user.getId())
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "Portfolio not found"
+                        )
+                );
+
+        return transactionRepository
+                .findAllByPortfolioIdOrderByExecutedAtDesc(
+                        portfolio.getId()
+                )
+                .stream()
+                .map(transaction ->
+                        new TransactionResponse(
+                                transaction.getId(),
+                                transaction.getOrder().getId(),
+                                transaction.getSymbol(),
+                                transaction.getSide().name(),
+                                transaction.getQuantity(),
+                                transaction.getPrice(),
+                                transaction.getTotalAmount(),
+                                transaction.getRealizedPnL(),
+                                transaction.getExecutedAt()
+                        )
+                )
+                .toList();
     }
 
     private OrderResponse executeBuy(
