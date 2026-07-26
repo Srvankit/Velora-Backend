@@ -1,12 +1,10 @@
-package com.veloramarkets.portfolio.dto;
+package com.veloramarkets.dashboard.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
-public record PortfolioResponse(
+public record DashboardResponse(
 
-        Long portfolioId,
         BigDecimal cashBalance,
 
         BigDecimal investedValue,
@@ -16,14 +14,15 @@ public record PortfolioResponse(
         BigDecimal unrealizedPnL,
         BigDecimal realizedPnL,
         BigDecimal totalPnL,
-
         BigDecimal returnPercentage,
 
         int totalHoldings,
-        List<HoldingResponse> holdings,
+        int totalOrders,
+        int totalTransactions,
 
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        List<DashboardHoldingResponse> topHoldings,
+        List<RecentOrderResponse> recentOrders,
+        List<RecentTransactionResponse> recentTransactions
 
 ) {
 }

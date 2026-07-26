@@ -23,6 +23,16 @@ public interface TradeTransactionRepository
             Long portfolioId,
             String symbol
     );
+
+    List<TradeTransaction>
+    findTop5ByPortfolioIdOrderByExecutedAtDesc(
+            Long portfolioId
+    );
+
+    long countByPortfolioId(
+            Long portfolioId
+    );
+
     @Query("""
        SELECT COALESCE(SUM(t.realizedPnL), 0)
        FROM TradeTransaction t

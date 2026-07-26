@@ -18,4 +18,13 @@ public interface TradeOrderRepository
             Long portfolioId,
             OrderStatus status
     );
+
+    List<TradeOrder>
+    findTop5ByPortfolioIdOrderByCreatedAtDesc(
+            Long portfolioId
+    );
+
+    long countByPortfolioId(
+            Long portfolioId
+    );
 }

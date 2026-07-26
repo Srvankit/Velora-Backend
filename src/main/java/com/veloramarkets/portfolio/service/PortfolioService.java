@@ -219,6 +219,30 @@ public class PortfolioService {
                                 RoundingMode.HALF_UP
                         );
 
+        BigDecimal returnPercentage;
+
+        if (totalInvested.compareTo(BigDecimal.ZERO) == 0) {
+
+            returnPercentage =
+                    BigDecimal.ZERO.setScale(
+                            2,
+                            RoundingMode.HALF_UP
+                    );
+
+        } else {
+
+            returnPercentage =
+                    totalPnL
+                            .multiply(
+                                    new BigDecimal("100")
+                            )
+                            .divide(
+                                    totalInvested,
+                                    2,
+                                    RoundingMode.HALF_UP
+                            );
+        }
+
         BigDecimal totalAccountValue =
                 portfolio.getCashBalance()
                         .add(totalMarketValue)
@@ -236,6 +260,7 @@ public class PortfolioService {
                 unrealizedPnL,
                 realizedPnL,
                 totalPnL,
+                returnPercentage,
                 holdingResponses.size(),
                 holdingResponses,
                 portfolio.getCreatedAt(),
