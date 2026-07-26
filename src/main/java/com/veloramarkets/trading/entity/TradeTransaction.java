@@ -17,6 +17,10 @@ import java.time.LocalDateTime;
                 @Index(
                         name = "idx_transactions_symbol",
                         columnList = "symbol"
+                ),
+                @Index(
+                        name = "idx_transactions_portfolio_executed",
+                        columnList = "portfolio_id, executed_at"
                 )
         }
 )

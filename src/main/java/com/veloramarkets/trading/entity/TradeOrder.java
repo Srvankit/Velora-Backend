@@ -21,6 +21,10 @@ import java.time.LocalDateTime;
                 @Index(
                         name = "idx_trade_orders_status",
                         columnList = "status"
+                ),
+                @Index(
+                        name = "idx_trade_orders_portfolio_created",
+                        columnList = "portfolio_id, created_at"
                 )
         }
 )

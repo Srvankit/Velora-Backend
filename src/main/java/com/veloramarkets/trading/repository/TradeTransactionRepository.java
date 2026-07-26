@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.veloramarkets.trading.entity.OrderSide;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 
@@ -31,6 +33,11 @@ public interface TradeTransactionRepository
 
     long countByPortfolioId(
             Long portfolioId
+    );
+
+    Page<TradeTransaction> findAllByPortfolioId(
+            Long portfolioId,
+            Pageable pageable
     );
 
     @Query("""

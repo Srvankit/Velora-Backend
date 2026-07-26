@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import com.veloramarkets.trading.dto.OrderHistoryResponse;
 import com.veloramarkets.trading.dto.TransactionResponse;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/api/v1/trading")
@@ -42,20 +45,70 @@ public class TradingController {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<List<OrderHistoryResponse>>
-    getOrderHistory(Authentication authentication) {
+    public ResponseEntity<Page<OrderHistoryResponse>>
+    getOrderHistory(
+            Authentication authentication,
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "20")
+            int size) {
+
+        int safeSize = Math.min(
+                Math.max(size, 1),
+                100
+        );
+
+        Pageable pageable =
+                PageRequest.of(
+                        Math.max(page, 0),
+                        safeSize,
+                        Sort.by(
+                                Sort.Direction.DESC,
+                                "createdAt"
+                        )
+                );
 
         return ResponseEntity.ok(
-                tradingService.getOrderHistory(authentication)
+                tradingService.getOrderHistory(
+                        authentication,
+                        pageable
+                )
         );
     }
 
     @GetMapping("/transactions")
-    public ResponseEntity<List<TransactionResponse>>
-    getTransactionHistory(Authentication authentication) {
+    public ResponseEntity<Page<TransactionResponse>>
+    getTransactionHistory(
+            Authentication authentication,
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "20")
+            int size) {
+
+        int safeSize = Math.min(
+                Math.max(size, 1),
+                100
+        );
+
+        Pageable pageable =
+                PageRequest.of(
+                        Math.max(page, 0),
+                        safeSize,
+                        Sort.by(
+                                Sort.Direction.DESC,
+                                "executedAt"
+                        )
+                );
 
         return ResponseEntity.ok(
-                tradingService.getTransactionHistory(authentication)
+                tradingService.getTransactionHistory(
+                        authentication,
+                        pageable
+                )
         );
     }
 }

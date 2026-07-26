@@ -16,6 +16,8 @@ import com.veloramarkets.user.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -107,8 +109,9 @@ public class TradingService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderHistoryResponse> getOrderHistory(
-            Authentication authentication) {
+    public Page<OrderHistoryResponse> getOrderHistory(
+            Authentication authentication,
+            Pageable pageable) {
 
         User user = getAuthenticatedUser(authentication);
 
@@ -121,10 +124,10 @@ public class TradingService {
                 );
 
         return orderRepository
-                .findAllByPortfolioIdOrderByCreatedAtDesc(
-                        portfolio.getId()
+                .findAllByPortfolioId(
+                        portfolio.getId(),
+                        pageable
                 )
-                .stream()
                 .map(order ->
                         new OrderHistoryResponse(
                                 order.getId(),
@@ -140,13 +143,13 @@ public class TradingService {
                                 order.getCreatedAt(),
                                 order.getExecutedAt()
                         )
-                )
-                .toList();
+                );
     }
 
     @Transactional(readOnly = true)
-    public List<TransactionResponse> getTransactionHistory(
-            Authentication authentication) {
+    public Page<TransactionResponse> getTransactionHistory(
+            Authentication authentication,
+            Pageable pageable) {
 
         User user = getAuthenticatedUser(authentication);
 
@@ -159,10 +162,10 @@ public class TradingService {
                 );
 
         return transactionRepository
-                .findAllByPortfolioIdOrderByExecutedAtDesc(
-                        portfolio.getId()
+                .findAllByPortfolioId(
+                        portfolio.getId(),
+                        pageable
                 )
-                .stream()
                 .map(transaction ->
                         new TransactionResponse(
                                 transaction.getId(),
@@ -175,8 +178,7 @@ public class TradingService {
                                 transaction.getRealizedPnL(),
                                 transaction.getExecutedAt()
                         )
-                )
-                .toList();
+                );
     }
 
     private OrderResponse executeBuy(

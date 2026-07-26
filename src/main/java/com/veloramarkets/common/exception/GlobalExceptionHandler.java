@@ -55,4 +55,72 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(response);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalState(
+            IllegalStateException exception) {
+
+        Map<String, Object> response =
+                new LinkedHashMap<>();
+
+        response.put(
+                "timestamp",
+                LocalDateTime.now()
+        );
+
+        response.put(
+                "status",
+                HttpStatus.CONFLICT.value()
+        );
+
+        response.put(
+                "error",
+                "Conflict"
+        );
+
+        response.put(
+                "message",
+                exception.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>>
+    handleUnexpectedException(
+            Exception exception) {
+
+        Map<String, Object> response =
+                new LinkedHashMap<>();
+
+        response.put(
+                "timestamp",
+                LocalDateTime.now()
+        );
+
+        response.put(
+                "status",
+                HttpStatus.INTERNAL_SERVER_ERROR.value()
+        );
+
+        response.put(
+                "error",
+                "Internal Server Error"
+        );
+
+        response.put(
+                "message",
+                "An unexpected error occurred"
+        );
+
+        return ResponseEntity
+                .status(
+                        HttpStatus.INTERNAL_SERVER_ERROR
+                )
+                .body(response);
+    }
+
 }
