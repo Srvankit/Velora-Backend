@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.veloramarkets.user.dto.UpdateUserRequest;
 import jakarta.validation.Valid;
+import com.veloramarkets.user.dto.ChangePasswordRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -25,6 +27,16 @@ public class UserController {
         return ResponseEntity.ok(
                 userService.getCurrentUser(authentication)
         );
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            Authentication authentication,
+            @Valid @RequestBody ChangePasswordRequest request) {
+
+        userService.changePassword(authentication, request);
+
+        return ResponseEntity.ok("Password changed successfully.");
     }
 
     @PutMapping("/me")
